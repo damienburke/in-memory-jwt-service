@@ -24,11 +24,12 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
-internal class ApplicationTest {
+internal class IntegrationTest {
 
     companion object {
         private val objectMapper = ObjectMapper()
-        private const val apiUrl = "http://localhost:39114"
+        private const val port = 39114
+        private const val apiUrl = "http://localhost:$port"
         private val client = HttpClient.newHttpClient()
         private val rsaKeyFactory = KeyFactory.getInstance("RSA")
         private const val jwksPath = "/.well-known/jwks.json"
@@ -36,7 +37,7 @@ internal class ApplicationTest {
         @JvmStatic
         @BeforeClass
         fun beforeAll() {
-            Thread { startServer(39114) }.start()
+            Thread { startServer(port) }.start()
             var ok = false
             while (!ok) {
 
@@ -78,7 +79,7 @@ internal class ApplicationTest {
         assertEquals(1, keys!!.size)
         val key = keys.first()
         assertEquals(setOf("alg", "kty", "use", "kid", "e", "n"), key.keys)
-        assertEquals("MOCK_KEY_ID", key["kid"])
+        assertEquals("KEY_ID", key["kid"])
         val rsaPublicKey = rsaKeyFactory.generatePublic(
             RSAPublicKeySpec(
                 BigInteger(Base64.decodeBase64(key["n"])),
@@ -123,7 +124,7 @@ internal class ApplicationTest {
         val authResponseTypeReference = object : TypeReference<Map<String, Any>>() {}
 
         val authRequest = HttpRequest.newBuilder()
-            .uri(URI.create("$apiUrl/auth"))
+            .uri(URI.create("$apiUrl/secure_api"))
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer $jwt")
             .GET()
@@ -152,7 +153,7 @@ internal class ApplicationTest {
             .sign(Algorithm.RSA256(newKeyProvider()))
 
         val failingAuthRequest = HttpRequest.newBuilder()
-            .uri(URI.create("$apiUrl/auth"))
+            .uri(URI.create("$apiUrl/secure_api"))
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer $serviceJwt")
             .GET()

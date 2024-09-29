@@ -12,10 +12,10 @@ import java.time.Instant
 import java.util.*
 
 
-internal class MockJwt {
+internal class InMemoryJwtService {
 
     companion object {
-        const val KID = "MOCK_KEY_ID"
+        const val KID = "KEY_ID"
         private val keyFactory = KeyPairGenerator.getInstance("RSA").also { it.initialize(2048) }
         private val keyPair = keyFactory.genKeyPair()
         internal val keyProvider = object : RSAKeyProvider {

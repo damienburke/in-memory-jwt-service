@@ -36,7 +36,7 @@ fun startServer(port: Int = 8008) {
 
         install(Authentication) {
             jwt {
-                verifier(JWT.require(Algorithm.RSA256(MockJwt.keyProvider)).build())
+                verifier(JWT.require(Algorithm.RSA256(InMemoryJwtService.keyProvider)).build())
                 validate { JWTPrincipal(it.payload) }
             }
         }
@@ -44,21 +44,21 @@ fun startServer(port: Int = 8008) {
         routing {
 
             get("/.well-known/jwks.json") {
-                call.respond(MockJwt.jwksMap)
+                call.respond(InMemoryJwtService.jwksMap)
             }
 
             post("/jwt") {
-                call.respond(MockJwt.createJwt(call.receive()))
+                call.respond(InMemoryJwtService.createJwt(call.receive()))
             }
 
-            // end point that requires JWT issued by itself
+            // end point that requires JWT
             authenticate {
-                get("/auth") {
+                get("/secure_api") {
                     val payload = call.principal<JWTPrincipal>()!!.payload
                     call.respond(
                         mapOf(
                             "authorities" to payload.claims["authorities"]!!.`as`(JsonNode::class.java),
-                            "identity" to MockJwt.payloadToUser(payload)
+                            "identity" to InMemoryJwtService.payloadToUser(payload)
                         )
                     )
                 }

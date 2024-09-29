@@ -160,7 +160,6 @@ internal class IntegrationTest {
             .build()
 
         val failingAuthResponse = client.send(failingAuthRequest, HttpResponse.BodyHandlers.ofString())
-
         assertEquals(401, failingAuthResponse.statusCode())
 
     }

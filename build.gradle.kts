@@ -25,13 +25,3 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlin:kotlin-test:1.6.21")
 }
-
-//tasks.jar {
-//    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-//    archiveFileName.set("in-memory-jwt-service.jar")
-//}
-//
-//tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>() {
-//    kotlinOptions.jvmTarget = "21"
-//    kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
-//}
